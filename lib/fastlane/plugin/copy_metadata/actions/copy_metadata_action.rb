@@ -2,15 +2,17 @@ require 'fastlane/action'
 require_relative '../helper/copy_metadata_helper'
 
 module Fastlane
-  module SharedValues
-    PUBLISH_METADATA = :PUBLISH_METADATA
-  end
-
   module Actions
+    module SharedValues
+      PUBLISH_METADATA = :PUBLISH_METADATA
+    end
+
     class CopyMetadataAction < Action
       def self.run(params)
-        if Dir.exist?(params[:metadata_dir])
-          FileUtils.cp_r("#{params[:metadata_dir]}/.", 'fastlane')
+        metadata = params[:metadata_path]
+        puts metadata
+        if Dir.exists?(metadata)
+          FileUtils.cp_r("#{metadata}/.", 'fastlane')
           Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::PUBLISH_METADATA] = true
         end
       end
@@ -38,7 +40,7 @@ module Fastlane
                                        env_name: "METADATA_PATH",
                                        description: "Metadata path",
                                        optional: true,
-                                       default_value: "../../Metadata/#{Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::PLATFORM_NAME]}",
+                                       default_value: "../Metadata/#{Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::PLATFORM_NAME]}",
                                        type: String)
         ]
       end
